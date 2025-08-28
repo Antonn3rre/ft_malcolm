@@ -25,9 +25,17 @@ int main(int argc, char **argv) {
     return (0);
   }
 
-  // associer socket a interface
+  // associer socket a interface --> necessaire pour envoyer reponse
 
+  int numbytes = 0;
+  char buffer[1000];
   while (1) {
+    numbytes = recvfrom(sockfd, buffer, sizeof(buffer), 0, NULL, NULL);
+    if (numbytes < 0) {
+      perror("recvfrom");
+      break;
+    }
+    printf("Reçu un paquet ARP de %d octets\n", numbytes);
     // ecouter les signaux
     if (g_signal == 1)
       break;
