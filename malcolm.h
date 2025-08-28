@@ -2,6 +2,9 @@
 #define MALCOLM_H
 
 #include "stdio.h"
+#include <arpa/inet.h>
+#include <linux/if_ether.h>
+#include <sys/socket.h>
 
 // checkInput.c
 int check_mac(char *str);
