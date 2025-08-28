@@ -1,5 +1,12 @@
 #include "malcolm.h"
 
+int g_signal = 0;
+
+void ctrlC(int signum) {
+  (void)signum;
+  g_signal = 1;
+}
+
 int main(int argc, char **argv) {
 
   if (argc != 5) {
@@ -10,12 +17,23 @@ int main(int argc, char **argv) {
   if (!check_args(argv))
     return (0);
 
+  signal(SIGINT, ctrlC);
+
   int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (sockfd == -1) {
     printf("Error opening socket\n");
     return (0);
   }
 
+  // associer socket a interface
+
+  while (1) {
+    // ecouter les signaux
+    if (g_signal == 1)
+      break;
+  }
+
+  close(sockfd);
   return (0);
 }
 
