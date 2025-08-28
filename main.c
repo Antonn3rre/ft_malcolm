@@ -4,20 +4,25 @@
 int g_signal = 0;
 
 struct arp_eth_ipv4 {
-  unsigned short int ar_hrd;
-  unsigned short int ar_pro;
-  unsigned char ar_hln;
-  unsigned char ar_pln;
-  unsigned short int ar_op;
-  unsigned char ar_sha[ETH_ALEN]; // Sender hardware address
+
+  // Former elements of arphdr
+  unsigned short int ar_hrd; // Format of hardware address
+  unsigned short int ar_pro; // Format of protocol address
+  unsigned char ar_hln;      // Length of hardware address
+  unsigned char ar_pln;      // Length of protocol address
+  unsigned short int ar_op;  // ARP opcode
+
+  // Aditionnal element to parse
+  unsigned char ar_sha[ETH_ALEN]; // Sender MAC address
   unsigned char ar_sip[4];        // Sender IP address
-  unsigned char ar_tha[ETH_ALEN]; // Target hardware address
+  unsigned char ar_tha[ETH_ALEN]; // Target MAC address
   unsigned char ar_tip[4];        // Target IP address
 };
 
 void ctrlC(int signum) {
   (void)signum;
   exit(1); // quitte bien mais fd leak
+           // TODO: changer le exit
   g_signal = 1;
 }
 
@@ -39,7 +44,7 @@ int main(int argc, char **argv) {
     return (0);
   }
 
-  // associer socket a interface --> necessaire pour envoyer reponse
+  // TODO: associer socket a interface --> necessaire pour envoyer reponse
 
   int numbytes = 0;
   char buffer[1000];
@@ -52,7 +57,6 @@ int main(int argc, char **argv) {
     printf("Reçu un paquet ARP de %d octets\n", numbytes);
     printf("\n\nDetail:\n\n%s\n", buffer);
     break; // pour tester deja 1 request
-    // ecouter les signaux
     if (g_signal == 1)
       break;
   }
