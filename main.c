@@ -4,6 +4,7 @@ int g_signal = 0;
 
 void ctrlC(int signum) {
   (void)signum;
+  exit(1); // quitte bien mais fd leak
   g_signal = 1;
 }
 
@@ -36,6 +37,7 @@ int main(int argc, char **argv) {
       break;
     }
     printf("Reçu un paquet ARP de %d octets\n", numbytes);
+    printf("\n\nDetail:\n\n%s\n", buffer);
     // ecouter les signaux
     if (g_signal == 1)
       break;

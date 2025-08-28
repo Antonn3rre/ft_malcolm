@@ -7,6 +7,7 @@
 #include <signal.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 // checkInput.c
 int check_mac(char *str);
