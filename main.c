@@ -3,21 +3,24 @@
 
 int g_signal = 0;
 
-struct arp_eth_ipv4 {
+int parse_packet(char *buffer, char **argv) {
 
-  // Former elements of arphdr
-  unsigned short int ar_hrd; // Format of hardware address
-  unsigned short int ar_pro; // Format of protocol address
-  unsigned char ar_hln;      // Length of hardware address
-  unsigned char ar_pln;      // Length of protocol address
-  unsigned short int ar_op;  // ARP opcode
+  (void)argv;
+  struct ethhdr *rcv_resp = (struct ethhdr *)buffer;
+  struct arp_eth_ipv4 *arp_resp =
+      (struct arp_eth_ipv4 *)(buffer + sizeof(struct ethhdr));
 
-  // Aditionnal element to parse
-  unsigned char ar_sha[ETH_ALEN]; // Sender MAC address
-  unsigned char ar_sip[4];        // Sender IP address
-  unsigned char ar_tha[ETH_ALEN]; // Target MAC address
-  unsigned char ar_tip[4];        // Target IP address
-};
+  if (ntohs(rcv_resp->h_proto) != ETH_P_ARP) { // pas certain d'en avoir besoin
+    printf("Soucis h h_proto\n");
+    return (0);
+  }
+
+  printf("arp sender ip address = %d.%d.%d.%d\n", arp_resp->ar_sip[0],
+         arp_resp->ar_sip[1], arp_resp->ar_sip[2], arp_resp->ar_sip[3]);
+  printf("arp target ip address = %d.%d.%d.%d\n", arp_resp->ar_tip[0],
+         arp_resp->ar_tip[1], arp_resp->ar_tip[2], arp_resp->ar_tip[3]);
+  return (1);
+}
 
 void ctrlC(int signum) {
   (void)signum;
@@ -33,9 +36,22 @@ int main(int argc, char **argv) {
     return (0);
   }
 
-  if (!check_args(argv))
+  struct s_input input;
+  if (!check_args(argv, &input))
     return (0);
-
+  /*
+  // Print args
+    printf("arp sender ip address = %d.%d.%d.%d\n", input.in_sip[0],
+           input.in_sip[1], input.in_sip[2], input.in_sip[3]);
+    printf("arp target ip address = %d.%d.%d.%d\n", input.in_tip[0],
+           input.in_tip[1], input.in_tip[2], input.in_tip[3]);
+    printf("arp sender mac = %02x.%02x.%02x.%02x.%02x.%02x\n", input.in_sha[0],
+           input.in_sha[1], input.in_sha[2], input.in_sha[3], input.in_sha[4],
+           input.in_sha[5]);
+    printf("arp target mac = %02x.%02x.%02x.%02x.%02x.%02x\n", input.in_tha[0],
+           input.in_tha[1], input.in_tha[2], input.in_tha[3], input.in_tha[4],
+           input.in_tha[5]);
+  */
   signal(SIGINT, ctrlC);
 
   int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
@@ -55,32 +71,14 @@ int main(int argc, char **argv) {
       break;
     }
     printf("Reçu un paquet ARP de %d octets\n", numbytes);
-    printf("\n\nDetail:\n\n%s\n", buffer);
-    break; // pour tester deja 1 request
+    if (parse_packet(buffer, argv))
+      break;
     if (g_signal == 1)
       break;
   }
 
-  struct ethhdr *rcv_resp = (struct ethhdr *)buffer;
-  struct arp_eth_ipv4 *arp_resp =
-      (struct arp_eth_ipv4 *)(buffer + sizeof(struct ethhdr));
-
-  if (ntohs(rcv_resp->h_proto) != ETH_P_ARP) { // pas certain d'en avoir besoin
-    printf("Soucis h h_proto\n");
-    return (0);
-  }
-
-  printf("arp sender ip address = %d.%d.%d.%d\n", arp_resp->ar_sip[0],
-         arp_resp->ar_sip[1], arp_resp->ar_sip[2], arp_resp->ar_sip[3]);
-  printf("arp target ip address = %d.%d.%d.%d\n", arp_resp->ar_tip[0],
-         arp_resp->ar_tip[1], arp_resp->ar_tip[2], arp_resp->ar_tip[3]);
-
-  /*
-struct in_addr sender_a;
-memset(&sender_a, 0, sizeof(struct in_addr));
-memcpy(&sender_a.s_addr, arp_resp->sender_ip, sizeof(uint32_t));
-*/
   close(sockfd);
+
   return (0);
 }
 
