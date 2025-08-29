@@ -63,18 +63,22 @@ int check_mac(char *str, unsigned char tab[6]) {
 }
 
 int check_args(char **argv, struct s_input *input) {
+	// IP that (should) receive the request
   if (!check_ip(argv[1], input->in_sip)) {
     printf("Bad IP adress: %s\n", argv[1]);
     return (0);
   }
+  // IP that sends the request (my target)
   if (!check_ip(argv[3], input->in_tip)) {
     printf("Bad IP adress: %s\n", argv[3]);
     return (0);
   }
+  // MAC to send back (spoofed one)
   if (!check_mac(argv[2], input->in_sha)) {
     printf("Bad MAC adress: %s\n", argv[2]);
     return (0);
   }
+  // MAC that sends the request (my target)
   if (!check_mac(argv[4], input->in_tha)) {
     printf("Bad MAC adress: %s\n", argv[4]);
     return (0);

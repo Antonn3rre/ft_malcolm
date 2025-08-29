@@ -16,20 +16,30 @@ int parse_packet(char *buffer, struct s_input input) {
 
   printf("arp sender ip address = %d.%d.%d.%d\n", arp_resp->ar_sip[0],
          arp_resp->ar_sip[1], arp_resp->ar_sip[2], arp_resp->ar_sip[3]);
-  printf("arp target ip address = %d.%d.%d.%d\n", arp_resp->ar_tip[0],
+  printf("arp sent to ip address = %d.%d.%d.%d\n", arp_resp->ar_tip[0],
          arp_resp->ar_tip[1], arp_resp->ar_tip[2], arp_resp->ar_tip[3]);
   printf("arp sender mac = %02x.%02x.%02x.%02x.%02x.%02x\n",
          arp_resp->ar_sha[0], arp_resp->ar_sha[1], arp_resp->ar_sha[2],
          arp_resp->ar_sha[3], arp_resp->ar_sha[4], arp_resp->ar_sha[5]);
 
   for (int i = 0; i < 4; i++) {
-    if (arp_resp->ar_sip[i] != input.in_sip[i])
+//	  printf("IP comp: %d et %d\n", arp_resp->ar_sip[i], input.in_sip[i]);
+    if (arp_resp->ar_sip[i] != input.in_tip[i]) // Comp the sender with my target
       return (0);
   }
+  printf("Target IP ok\n");
   for (int i = 0; i < 6; i++) {
-    if (arp_resp->ar_sha[i] != input.in_sha[i])
+    if (arp_resp->ar_sha[i] != input.in_tha[i])
       return (0);
   }
+  printf("Target MAC ok\n");
+  for (int i = 0; i < 4; i++) {
+//	  printf("IP comp: %d et %d\n", arp_resp->ar_sip[i], input.in_sip[i]);
+    if (arp_resp->ar_tip[i] != input.in_sip[i])
+      return (0);
+  }
+  printf("Sender IP ok\n");
+
 
   return (1);
 }
