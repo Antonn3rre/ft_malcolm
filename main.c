@@ -3,9 +3,8 @@
 
 int g_signal = 0;
 
-int parse_packet(char *buffer, char **argv) {
+int parse_packet(char *buffer, struct s_input input) {
 
-  (void)argv;
   struct ethhdr *rcv_resp = (struct ethhdr *)buffer;
   struct arp_eth_ipv4 *arp_resp =
       (struct arp_eth_ipv4 *)(buffer + sizeof(struct ethhdr));
@@ -19,6 +18,19 @@ int parse_packet(char *buffer, char **argv) {
          arp_resp->ar_sip[1], arp_resp->ar_sip[2], arp_resp->ar_sip[3]);
   printf("arp target ip address = %d.%d.%d.%d\n", arp_resp->ar_tip[0],
          arp_resp->ar_tip[1], arp_resp->ar_tip[2], arp_resp->ar_tip[3]);
+  printf("arp sender mac = %02x.%02x.%02x.%02x.%02x.%02x\n",
+         arp_resp->ar_sha[0], arp_resp->ar_sha[1], arp_resp->ar_sha[2],
+         arp_resp->ar_sha[3], arp_resp->ar_sha[4], arp_resp->ar_sha[5]);
+
+  for (int i = 0; i < 4; i++) {
+    if (arp_resp->ar_sip[i] != input.in_sip[i])
+      return (0);
+  }
+  for (int i = 0; i < 6; i++) {
+    if (arp_resp->ar_sha[i] != input.in_sha[i])
+      return (0);
+  }
+
   return (1);
 }
 
@@ -71,7 +83,8 @@ int main(int argc, char **argv) {
       break;
     }
     printf("Reçu un paquet ARP de %d octets\n", numbytes);
-    if (parse_packet(buffer, argv))
+    if (parse_packet(buffer, input))
+      // Break if the request come from the rigth sender
       break;
     if (g_signal == 1)
       break;
