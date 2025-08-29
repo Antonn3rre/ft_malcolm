@@ -41,8 +41,12 @@ int check_args(char **argv, struct s_input *input);
 size_t ft_strlen(const char *s);
 int ft_isalnum(int c);
 int strict_atoi(const char *nptr, int *i);
+void *ft_memcpy(void *dest, const void *src, size_t n);
 
 // parsePacket
 int parse_packet(char *buffer, struct s_input input);
+
+// createResponse
+char *createResponse(struct s_input input);
 
 #endif // !MALCOLM_H

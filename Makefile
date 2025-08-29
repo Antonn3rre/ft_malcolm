@@ -9,7 +9,8 @@ CFLAGS = -Wall -Wextra -Werror
 SRC = main.c \
 			utils.c \
 			checkInput.c \
-			parsePacket.c
+			parsePacket.c \
+			createResponse.c
 
 OBJ = $(SRC:.c=.o)
 

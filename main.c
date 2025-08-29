@@ -59,6 +59,7 @@ int main(int argc, char **argv) {
     if (g_signal == 1)
       break;
   }
+  createResponse(input);
 
   // TODO: Create response
   // TODO: Add send response
