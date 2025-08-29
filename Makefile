@@ -8,7 +8,8 @@ CFLAGS = -Wall -Wextra -Werror
 # Fichiers sources et objets
 SRC = main.c \
 			utils.c \
-			checkInput.c
+			checkInput.c \
+			parsePacket.c
 
 OBJ = $(SRC:.c=.o)
 

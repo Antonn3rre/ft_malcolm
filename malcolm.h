@@ -42,4 +42,7 @@ size_t ft_strlen(const char *s);
 int ft_isalnum(int c);
 int strict_atoi(const char *nptr, int *i);
 
+// parsePacket
+int parse_packet(char *buffer, struct s_input input);
+
 #endif // !MALCOLM_H
