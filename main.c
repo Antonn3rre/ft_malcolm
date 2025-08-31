@@ -1,6 +1,4 @@
 #include "malcolm.h"
-#include <linux/if_ether.h>
-#include <sys/socket.h>
 
 int g_signal = 0;
 
@@ -62,19 +60,20 @@ int main(int argc, char **argv) {
   }
 
   // Create ARP response
-  unsigned char *responseBuf;
-  responseBuf = createResponse(input);
+  unsigned char responseBuf[42];
+  createResponse(input, responseBuf);
 
   // Send ARP response
   struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
   addr.sll_family = AF_PACKET;
   addr.sll_protocol = htons(ETH_P_ARP);
   addr.sll_ifindex = if_nametoindex("enp0s3");
-  addr.sll_halen = 4;
-  ft_memcpy(addr.sll_addr, input.in_tip, 4);
+  addr.sll_halen = 6;
+  ft_memcpy(addr.sll_addr, input.in_tha, 6);
 
-  if (sendto(sockfd, responseBuf, sizeof(responseBuf), 0,
-             (struct sockaddr *)&addr, sizeof(addr)) == -1)
+  if (sendto(sockfd, responseBuf,
+             sizeof(struct ethhdr) + sizeof(struct arp_eth_ipv4), 0,
+             (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) == -1)
     printf("Error sendto\n");
   close(sockfd);
 

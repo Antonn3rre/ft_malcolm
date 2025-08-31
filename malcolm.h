@@ -49,6 +49,6 @@ void *ft_memcpy(void *dest, const void *src, size_t n);
 int parse_packet(char *buffer, struct s_input input);
 
 // createResponse
-unsigned char *createResponse(struct s_input input);
+void createResponse(struct s_input input, unsigned char response[42]);
 
 #endif // !MALCOLM_H

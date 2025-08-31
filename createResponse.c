@@ -1,8 +1,7 @@
 #include "malcolm.h"
 
-unsigned char *createResponse(struct s_input input) {
+void createResponse(struct s_input input, unsigned char buffer[42]) {
 
-  unsigned char buffer[42]; // 14 (Ethernet) + 28 (ARP IPv4)
   struct ethhdr *header = (struct ethhdr *)buffer;
   ft_memcpy(header->h_dest, input.in_tha, 6);
   ft_memcpy(header->h_source, input.in_sha, 6);
@@ -21,8 +20,6 @@ unsigned char *createResponse(struct s_input input) {
   ft_memcpy(response->ar_sip, input.in_sip, 4);
   ft_memcpy(response->ar_tha, input.in_tha, 6);
   ft_memcpy(response->ar_tip, input.in_tip, 4);
-
-  return (NULL);
 }
 /*
 struct arp_eth_ipv4 {
