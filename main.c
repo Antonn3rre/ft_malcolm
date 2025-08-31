@@ -66,11 +66,16 @@ int main(int argc, char **argv) {
   responseBuf = createResponse(input);
 
   // Send ARP response
-  struct sockaddr addr;
-  addr.sa_family = AF_INET;
-  ft_memcpy(addr.sa_data, input.in_tip, 4);
-  sendto(sockfd, responseBuf, sizeof(responseBuf), 0, (struct sockaddr *)&addr,
-         sizeof(addr));
+  struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
+  addr.sll_family = AF_PACKET;
+  addr.sll_protocol = htons(ETH_P_ARP);
+  addr.sll_ifindex = if_nametoindex("enp0s3");
+  addr.sll_halen = 4;
+  ft_memcpy(addr.sll_addr, input.in_tip, 4);
+
+  if (sendto(sockfd, responseBuf, sizeof(responseBuf), 0,
+             (struct sockaddr *)&addr, sizeof(addr)) == -1)
+    printf("Error sendto\n");
   close(sockfd);
 
   return (0);

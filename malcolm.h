@@ -3,8 +3,9 @@
 
 #include "stdio.h"
 #include <arpa/inet.h>
-#include <linux/if_arp.h>
-#include <linux/if_ether.h>
+#include <net/if.h>
+#include <netinet/if_ether.h>
+#include <netpacket/packet.h>
 #include <signal.h>
 #include <stdlib.h>
 #include <sys/socket.h>
