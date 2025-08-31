@@ -3,6 +3,7 @@
 
 #include "stdio.h"
 #include <arpa/inet.h>
+#include <linux/if_arp.h>
 #include <linux/if_ether.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -47,6 +48,6 @@ void *ft_memcpy(void *dest, const void *src, size_t n);
 int parse_packet(char *buffer, struct s_input input);
 
 // createResponse
-char *createResponse(struct s_input input);
+unsigned char *createResponse(struct s_input input);
 
 #endif // !MALCOLM_H

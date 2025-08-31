@@ -1,5 +1,6 @@
 #include "malcolm.h"
 #include <linux/if_ether.h>
+#include <sys/socket.h>
 
 int g_signal = 0;
 
@@ -59,10 +60,17 @@ int main(int argc, char **argv) {
     if (g_signal == 1)
       break;
   }
-  createResponse(input);
 
-  // TODO: Create response
-  // TODO: Add send response
+  // Create ARP response
+  unsigned char *responseBuf;
+  responseBuf = createResponse(input);
+
+  // Send ARP response
+  struct sockaddr addr;
+  addr.sa_family = AF_INET;
+  ft_memcpy(addr.sa_data, input.in_tip, 4);
+  sendto(sockfd, responseBuf, sizeof(responseBuf), 0, (struct sockaddr *)&addr,
+         sizeof(addr));
   close(sockfd);
 
   return (0);
