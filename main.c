@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
   if (sendto(sockfd, responseBuf,
              sizeof(struct ethhdr) + sizeof(struct arp_eth_ipv4), 0,
              (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) == -1)
-    printf("Error sendto\n");
+	  perror("sendto");
   close(sockfd);
 
   return (0);

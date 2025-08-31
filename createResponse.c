@@ -14,7 +14,7 @@ void createResponse(struct s_input input, unsigned char buffer[42]) {
   response->ar_pro = htons(ETH_P_IP);
   response->ar_hln = 6;
   response->ar_pln = 4;
-  response->ar_op = 2; // Means that it's a response
+  response->ar_op = htons(2); // Means that it's a response
 
   ft_memcpy(response->ar_sha, input.in_sha, 6);
   ft_memcpy(response->ar_sip, input.in_sip, 4);
