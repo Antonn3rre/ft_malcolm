@@ -10,7 +10,8 @@ SRC = main.c \
 			utils.c \
 			checkInput.c \
 			parsePacket.c \
-			createResponse.c
+			createResponse.c \
+			checkInterface.c
 
 OBJ = $(SRC:.c=.o)
 

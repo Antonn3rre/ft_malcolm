@@ -3,6 +3,7 @@
 
 #include "stdio.h"
 #include <arpa/inet.h>
+#include <ifaddrs.h>
 #include <net/if.h>
 #include <netinet/if_ether.h>
 #include <netpacket/packet.h>
@@ -16,6 +17,7 @@ struct s_input {
   unsigned char in_sip[4];
   unsigned char in_tha[6];
   unsigned char in_tip[4];
+  char interface[100];
 };
 
 struct arp_eth_ipv4 {
@@ -38,6 +40,9 @@ struct arp_eth_ipv4 {
 int check_mac(char *str, unsigned char tab[6]);
 int check_ip(char *str, unsigned char tab[4]);
 int check_args(char **argv, struct s_input *input);
+
+// checkInterface.c
+int checkInterface(struct s_input *input);
 
 // utils.c
 size_t ft_strlen(const char *s);
