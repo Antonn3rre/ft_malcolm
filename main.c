@@ -7,12 +7,11 @@ void ctrlC(int signum) {
   g_signal = 1;
 }
 
-// TODO: signal
-
 int main(int argc, char **argv) {
 
+  signal(SIGINT, ctrlC);
   if (argc < 5 || argc > 6) {
-    dprintf(2, "Wrong number of arguments\n");
+    dprintf(2, "\e[31mWrong number of arguments\e[0m\n");
     return (printExpectedInput(), 0);
   }
 
@@ -20,13 +19,12 @@ int main(int argc, char **argv) {
   if (!check_args(argv, &input, argc - 5) || !checkInterface(&input))
     return (0);
 
-  signal(SIGINT, ctrlC);
 
   if (input.verbose)
     printf("\e[34m[ Opening socket ]\n\e[0m");
   int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (sockfd == -1) {
-    dprintf(2, "Error opening socket\n");
+    dprintf(2, "\e[31mError opening socket\e[0m\n");
     return (0);
   }
 
@@ -45,11 +43,10 @@ int main(int argc, char **argv) {
   while (1) {
     numbytes = recvfrom(sockfd, buffer, sizeof(buffer), 0, NULL, NULL);
     if (numbytes < 0) {
-      if (errno == EAGAIN || errno == EWOULDBLOCK) {
-        if (g_signal == 1)
-          return (close(sockfd), 0);
+      if (errno == EAGAIN || errno == EWOULDBLOCK)
         continue;
-      }
+      if (errno == EINTR)
+	return (close(sockfd), 0);
       perror("recvfrom");
       break;
     }

@@ -4,10 +4,15 @@
 
 int checkHostname(char *str, unsigned char tab[4]) {
 
-  struct hostent *host = gethostbyname(str);
-  if (!host || host->h_addrtype != AF_INET)
-    return (0);
-  ft_memcpy(tab, host->h_addr_list[0], host->h_length);
+	struct addrinfo hints, *res;
+	ft_memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+
+	if (getaddrinfo(str, NULL, &hints, &res) != 0)
+		return (0);  // If fail
+	struct sockaddr_in *addr = (struct sockaddr_in *)res->ai_addr;
+	ft_memcpy(tab, &addr->sin_addr, 4);
+	freeaddrinfo(res);
   return (1);
 }
 
@@ -91,35 +96,35 @@ int check_args(char **argv, struct s_input *input, int option) {
 
   // IP that (should) receive the request
   if (!check_ip(argv[i], input->in_sip)) {
-    printf("unknown host or invalid IP address: %s\n", argv[1]);
+    printf("\e[31munknown host or invalid IP address: %s\e[0m\n", argv[1]);
     return (printExpectedInput(), 0);
   }
   // IP that sends the request (my target)
   if (!check_ip(argv[i + 2], input->in_tip)) {
-    printf("unknown host or invalid IP address: %s\n", argv[i + 2]);
+    printf("\e[31munknown host or invalid IP address: %s\e[0m\n", argv[i + 2]);
     return (printExpectedInput(), 0);
   }
   // MAC to send back (spoofed one)
   if (!check_mac(argv[i + 1], input->in_sha)) {
-    printf("invalid MAC address: %s\n", argv[i + 1]);
+    printf("\e[31minvalid MAC address: %s\e[0m\n", argv[i + 1]);
     return (printExpectedInput(), 0);
   }
   // MAC that sends the request (my target)
   if (!check_mac(argv[i + 3], input->in_tha)) {
-    printf("invalid MAC address: %s\n", argv[i + 3]);
+    printf("\e[31minvalid MAC address: %s\e[0m\n", argv[i + 3]);
     return (printExpectedInput(), 0);
   }
 
   // Print args
   if (input->verbose) {
-    printf("Source IP = %d.%d.%d.%d\n", input->in_sip[0], input->in_sip[1],
+    printf("\e[34mSource IP = %d.%d.%d.%d\n", input->in_sip[0], input->in_sip[1],
            input->in_sip[2], input->in_sip[3]);
     printf("Source MAC address = %02x:%02x:%02x:%02x:%02x:%02x\n",
            input->in_sha[0], input->in_sha[1], input->in_sha[2],
            input->in_sha[3], input->in_sha[4], input->in_sha[5]);
     printf("Target IP = %d.%d.%d.%d\n", input->in_tip[0], input->in_tip[1],
            input->in_tip[2], input->in_tip[3]);
-    printf("Target MAC address = %02x:%02x:%02x:%02x:%02x:%02x\n",
+    printf("Target MAC address = %02x:%02x:%02x:%02x:%02x:%02x\e[0m\n",
            input->in_tha[0], input->in_tha[1], input->in_tha[2],
            input->in_tha[3], input->in_tha[4], input->in_tha[5]);
   }

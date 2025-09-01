@@ -53,6 +53,6 @@ int checkInterface(struct s_input *input) {
     ifap = ifap->ifa_next;
   }
   freeifaddrs(tmp);
-  printf("No matching interface found\n");
+  printf("\e[31mNo matching interface found\e[0m\n");
   return (0);
 }
