@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
     if (numbytes < 0) {
       if (errno == EAGAIN || errno == EWOULDBLOCK) {
         if (g_signal == 1)
-          break;
+          return (close(sockfd), 0);
         continue;
       }
       perror("recvfrom");
