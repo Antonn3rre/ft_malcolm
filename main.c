@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
          "please wait...\n");
   // Send ARP response
   struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
+  ft_memset(&addr, 0, sizeof(addr));
   addr.sll_family = AF_PACKET;
   addr.sll_protocol = htons(ETH_P_ARP);
   // Precise de l'envoyer sur l'interface qui correpond au bon reseau
@@ -68,7 +69,7 @@ int main(int argc, char **argv) {
   if (sendto(sockfd, responseBuf,
              sizeof(struct ethhdr) + sizeof(struct arp_eth_ipv4), 0,
              (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) == -1)
-    perror("sendto");
+    return (perror("sendto"), close(sockfd), 0);
   close(sockfd);
   printf("Sent an ARP reply packet, you may now check the arp table on the "
          "target.\nExiting program..\n");

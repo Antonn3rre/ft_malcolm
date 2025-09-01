@@ -74,3 +74,18 @@ int ft_strncmp(const char *s1, const char *s2, size_t n) {
   }
   return (0);
 }
+
+void *ft_memset(void *s, int c, size_t n) {
+  size_t i;
+  unsigned char d;
+  unsigned char *str;
+
+  i = 0;
+  d = (unsigned char)c;
+  str = (unsigned char *)s;
+  while (i < n) {
+    str[i] = d;
+    i++;
+  }
+  return ((void *)str);
+}
