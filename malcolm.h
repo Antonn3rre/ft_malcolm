@@ -3,6 +3,7 @@
 
 #include "stdio.h"
 #include <arpa/inet.h>
+#include <errno.h>
 #include <ifaddrs.h>
 #include <net/if.h>
 #include <netdb.h>

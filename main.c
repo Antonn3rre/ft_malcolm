@@ -4,13 +4,10 @@ int g_signal = 0;
 
 void ctrlC(int signum) {
   (void)signum;
-  exit(1); // quitte bien mais fd leak
-           // TODO: changer le exit
   g_signal = 1;
 }
 
 // TODO: signal
-// TODO: printf error stderr
 
 int main(int argc, char **argv) {
 
@@ -33,6 +30,14 @@ int main(int argc, char **argv) {
     return (0);
   }
 
+  // Timeout for signal
+  struct timeval tv;
+  tv.tv_sec = 1; // 1 seconde
+  tv.tv_usec = 0;
+
+  if (setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv)) < 0)
+    return (perror("setsockopt"), 0);
+
   if (input.verbose)
     printf("\e[34m[ Waiting for an ARP request ]\n\e[0m");
   int numbytes = 0;
@@ -40,14 +45,17 @@ int main(int argc, char **argv) {
   while (1) {
     numbytes = recvfrom(sockfd, buffer, sizeof(buffer), 0, NULL, NULL);
     if (numbytes < 0) {
+      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+        if (g_signal == 1)
+          break;
+        continue;
+      }
       perror("recvfrom");
       break;
     }
     printf("AN ARP request has been broadcast\n");
     if (parse_packet(buffer, input))
       // Break if the request come from the rigth sender
-      break;
-    if (g_signal == 1)
       break;
   }
 
