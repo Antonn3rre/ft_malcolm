@@ -24,31 +24,31 @@ int parse_packet(char *buffer, struct s_input input) {
     if (arp_resp->ar_sip[i] !=
         input.in_tip[i]) { // Comp the sender with my target
       if (input.verbose)
-        printf("The sender IP is not my target's\n");
+        printf("The ARP request sender IP is not my target's\n");
       return (0);
     }
   }
   if (input.verbose)
-    printf("The target IP correponds\n");
+    printf("The ARP request sender IP correponds to my target IP\n");
   for (int i = 0; i < 6; i++) {
     if (arp_resp->ar_sha[i] != input.in_tha[i]) {
       if (input.verbose)
-        printf("The sender MAC is not my target's\n");
+        printf("The ARP request sender MAC is not my target's\n");
       return (0);
     }
   }
   if (input.verbose)
-    printf("The target MAC correponds\n");
+    printf("The ARP request sender MAC correponds to my target MAC\n");
   for (int i = 0; i < 4; i++) {
     //	  printf("IP comp: %d et %d\n", arp_resp->ar_sip[i], input.in_sip[i]);
     if (arp_resp->ar_tip[i] != input.in_sip[i]) {
       if (input.verbose)
-        printf("The target IP is not my sender's\n");
+        printf("The ARP request target IP is not my sender's\n");
       return (0);
     }
   }
   if (input.verbose)
-    printf("The sender IP correponds\n");
+    printf("The ARP request target correponds to my sender IP\n");
 
   return (1);
 }
