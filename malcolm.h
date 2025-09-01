@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <ifaddrs.h>
 #include <net/if.h>
+#include <netdb.h>
 #include <netinet/if_ether.h>
 #include <netpacket/packet.h>
 #include <signal.h>

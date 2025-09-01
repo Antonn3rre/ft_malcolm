@@ -1,4 +1,15 @@
 #include "malcolm.h"
+#include <sys/socket.h>
+#include <unistd.h>
+
+int checkHostname(char *str, unsigned char tab[4]) {
+
+  struct hostent *host = gethostbyname(str);
+  if (!host || host->h_addrtype != AF_INET)
+    return (0);
+  ft_memcpy(tab, host->h_addr_list[0], host->h_length);
+  return (1);
+}
 
 int check_ip(char *str, unsigned char tab[4]) {
   int i = 0;
@@ -8,18 +19,18 @@ int check_ip(char *str, unsigned char tab[4]) {
   while (str[i] && numOfNum < 4) {
     value = strict_atoi(str, &i);
     if (value == -1)
-      return (0);
+      return (checkHostname(str, tab));
     else
       tab[numOfNum] = value;
     numOfNum++;
     if (!str[i])
       break;
     if (str[i] != '.')
-      return (0);
+      return (checkHostname(str, tab));
     i++;
   }
   if (numOfNum != 4)
-    return (0);
+    return (checkHostname(str, tab));
   return (1);
 }
 
