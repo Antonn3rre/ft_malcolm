@@ -16,6 +16,7 @@ int checkInterface(struct s_input *input) {
   ft_memcpy(&inp_tip, input->in_tip, 4);
   ft_memcpy(&inp_sip, input->in_sip, 4);
 
+  struct ifaddrs *tmp = ifap;
   while (ifap) {
 
     // If not an IPV4 address, skip
@@ -44,11 +45,13 @@ int checkInterface(struct s_input *input) {
 
       input->interIndex = if_nametoindex(ifap->ifa_name);
       printf("\e[32mFound available interface: %s\n\e[0m", ifap->ifa_name);
+      freeifaddrs(tmp);
       return (1);
     }
     if (input->verbose)
       printf("\e[33mNot on the same network: %s\e[0m\n", ifap->ifa_name);
     ifap = ifap->ifa_next;
   }
+      freeifaddrs(tmp);
   return (0);
 }
