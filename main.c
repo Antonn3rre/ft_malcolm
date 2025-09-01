@@ -33,49 +33,47 @@ int main(int argc, char **argv) {
            input.in_tha[5]);
   */
   signal(SIGINT, ctrlC);
-  /*
-    int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
-    if (sockfd == -1) {
-      printf("Error opening socket\n");
-      return (0);
+
+  int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
+  if (sockfd == -1) {
+    printf("Error opening socket\n");
+    return (0);
+  }
+
+  int numbytes = 0;
+  char buffer[1000];
+  while (1) {
+    numbytes = recvfrom(sockfd, buffer, sizeof(buffer), 0, NULL, NULL);
+    if (numbytes < 0) {
+      perror("recvfrom");
+      break;
     }
+    printf("Reçu un paquet ARP de %d octets\n", numbytes);
+    if (parse_packet(buffer, input))
+      // Break if the request come from the rigth sender
+      break;
+    if (g_signal == 1)
+      break;
+  }
 
-    // TODO: associer socket a interface -->
+  // Create ARP response
+  unsigned char responseBuf[42];
+  createResponse(input, responseBuf);
 
-    int numbytes = 0;
-    char buffer[1000];
-    while (1) {
-      numbytes = recvfrom(sockfd, buffer, sizeof(buffer), 0, NULL, NULL);
-      if (numbytes < 0) {
-        perror("recvfrom");
-        break;
-      }
-      printf("Reçu un paquet ARP de %d octets\n", numbytes);
-      if (parse_packet(buffer, input))
-        // Break if the request come from the rigth sender
-        break;
-      if (g_signal == 1)
-        break;
-    }
+  // Send ARP response
+  struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
+  addr.sll_family = AF_PACKET;
+  addr.sll_protocol = htons(ETH_P_ARP);
+  addr.sll_ifindex = if_nametoindex("enp0s3");
+  addr.sll_halen = 6;
+  ft_memcpy(addr.sll_addr, input.in_tha, 6);
 
-    // Create ARP response
-    unsigned char responseBuf[42];
-    createResponse(input, responseBuf);
+  if (sendto(sockfd, responseBuf,
+             sizeof(struct ethhdr) + sizeof(struct arp_eth_ipv4), 0,
+             (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) == -1)
+    perror("sendto");
+  close(sockfd);
 
-    // Send ARP response
-    struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
-    addr.sll_family = AF_PACKET;
-    addr.sll_protocol = htons(ETH_P_ARP);
-    addr.sll_ifindex = if_nametoindex("enp0s3");
-    addr.sll_halen = 6;
-    ft_memcpy(addr.sll_addr, input.in_tha, 6);
-
-    if (sendto(sockfd, responseBuf,
-               sizeof(struct ethhdr) + sizeof(struct arp_eth_ipv4), 0,
-               (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) == -1)
-      perror("sendto");
-    close(sockfd);
-  */
   return (0);
 }
 

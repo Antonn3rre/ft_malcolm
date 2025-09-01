@@ -17,7 +17,8 @@ struct s_input {
   unsigned char in_sip[4];
   unsigned char in_tha[6];
   unsigned char in_tip[4];
-  char interface[100];
+  unsigned char interface_ip[4];
+  unsigned char interface_mac[6];
 };
 
 struct arp_eth_ipv4 {
@@ -49,6 +50,7 @@ size_t ft_strlen(const char *s);
 int ft_isalnum(int c);
 int strict_atoi(const char *nptr, int *i);
 void *ft_memcpy(void *dest, const void *src, size_t n);
+int ft_memcmp(const void *s1, const void *s2, size_t n);
 
 // parsePacket
 int parse_packet(char *buffer, struct s_input input);
