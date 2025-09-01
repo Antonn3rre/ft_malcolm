@@ -44,7 +44,7 @@ int checkInterface(struct s_input *input) {
         (inp_sip & mask) == (ip_iface & mask)) {
 
       input->interIndex = if_nametoindex(ifap->ifa_name);
-      printf("\e[32mFound available interface: %s\n\e[0m", ifap->ifa_name);
+      printf("\e[32mFound available interface: %s\e[0m\n", ifap->ifa_name);
       freeifaddrs(tmp);
       return (1);
     }

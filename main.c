@@ -57,6 +57,7 @@ int main(int argc, char **argv) {
     if (parse_packet(buffer, input))
       // Break if the request come from the rigth sender
       break;
+    printf("The ARP request does not correspond to the expected info\n");
   }
 
   // Create ARP response
