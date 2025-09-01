@@ -9,11 +9,14 @@ void ctrlC(int signum) {
   g_signal = 1;
 }
 
+// TODO: signal
+// TODO: printf error stderr
+
 int main(int argc, char **argv) {
 
   if (argc < 5 || argc > 6) {
-    printf("Wrong number of arguments\n");
-    return (0);
+    dprintf(2, "Wrong number of arguments\n");
+    return (printExpectedInput(), 0);
   }
 
   struct s_input input;
@@ -26,7 +29,7 @@ int main(int argc, char **argv) {
     printf("\e[34m[ Opening socket ]\n\e[0m");
   int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (sockfd == -1) {
-    printf("Error opening socket\n");
+    dprintf(2, "Error opening socket\n");
     return (0);
   }
 

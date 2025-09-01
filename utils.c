@@ -89,3 +89,10 @@ void *ft_memset(void *s, int c, size_t n) {
   }
   return ((void *)str);
 }
+
+void printExpectedInput() {
+  printf("Expected usage: ./ft_malcolm [-v] [Source IP, IPV4 format] [Source "
+         "MAC] [Target IP] [Target MAC]\n");
+  printf("Example: ./ft_malcolm 10.0.0.5 aa:bb:cc:dd:ee:ff 10.0.0.6 "
+         "01:20:cc:dd:ee:ff\n");
+}

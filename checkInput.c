@@ -69,8 +69,7 @@ int check_args(char **argv, struct s_input *input, int option) {
   input->verbose = 0;
   if (option) {
     if (ft_strncmp("-v", argv[i], 3)) {
-      printf("Bad usage ...\n"); // TODO: adapt
-      return (0);
+      return (printExpectedInput(), 0);
     } else {
       input->verbose = 1;
       i++;
@@ -82,22 +81,22 @@ int check_args(char **argv, struct s_input *input, int option) {
   // IP that (should) receive the request
   if (!check_ip(argv[i], input->in_sip)) {
     printf("Bad IP adress: %s\n", argv[1]);
-    return (0);
+    return (printExpectedInput(), 0);
   }
   // IP that sends the request (my target)
   if (!check_ip(argv[i + 2], input->in_tip)) {
     printf("Bad IP adress: %s\n", argv[i + 2]);
-    return (0);
+    return (printExpectedInput(), 0);
   }
   // MAC to send back (spoofed one)
   if (!check_mac(argv[i + 1], input->in_sha)) {
     printf("Bad MAC adress: %s\n", argv[i + 1]);
-    return (0);
+    return (printExpectedInput(), 0);
   }
   // MAC that sends the request (my target)
   if (!check_mac(argv[i + 3], input->in_tha)) {
     printf("Bad MAC adress: %s\n", argv[i + 3]);
-    return (0);
+    return (printExpectedInput(), 0);
   }
 
   // Print args

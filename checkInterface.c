@@ -52,6 +52,7 @@ int checkInterface(struct s_input *input) {
       printf("\e[33mNot on the same network: %s\e[0m\n", ifap->ifa_name);
     ifap = ifap->ifa_next;
   }
-      freeifaddrs(tmp);
+  freeifaddrs(tmp);
+  printf("No matching interface found\n");
   return (0);
 }
