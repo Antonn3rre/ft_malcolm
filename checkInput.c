@@ -62,26 +62,57 @@ int check_mac(char *str, unsigned char tab[6]) {
   return (1);
 }
 
-int check_args(char **argv, struct s_input *input) {
-	// IP that (should) receive the request
-  if (!check_ip(argv[1], input->in_sip)) {
+int check_args(char **argv, struct s_input *input, int option) {
+
+  int i = 1;
+
+  input->verbose = 0;
+  if (option) {
+    if (ft_strncmp("-v", argv[i], 3)) {
+      printf("Bad usage ...\n"); // TODO: adapt
+      return (0);
+    } else {
+      input->verbose = 1;
+      i++;
+    }
+  }
+  if (input->verbose)
+    printf("\e[34m[ Checking input ]\n\e[0m");
+
+  // IP that (should) receive the request
+  if (!check_ip(argv[i], input->in_sip)) {
     printf("Bad IP adress: %s\n", argv[1]);
     return (0);
   }
   // IP that sends the request (my target)
-  if (!check_ip(argv[3], input->in_tip)) {
-    printf("Bad IP adress: %s\n", argv[3]);
+  if (!check_ip(argv[i + 2], input->in_tip)) {
+    printf("Bad IP adress: %s\n", argv[i + 2]);
     return (0);
   }
   // MAC to send back (spoofed one)
-  if (!check_mac(argv[2], input->in_sha)) {
-    printf("Bad MAC adress: %s\n", argv[2]);
+  if (!check_mac(argv[i + 1], input->in_sha)) {
+    printf("Bad MAC adress: %s\n", argv[i + 1]);
     return (0);
   }
   // MAC that sends the request (my target)
-  if (!check_mac(argv[4], input->in_tha)) {
-    printf("Bad MAC adress: %s\n", argv[4]);
+  if (!check_mac(argv[i + 3], input->in_tha)) {
+    printf("Bad MAC adress: %s\n", argv[i + 3]);
     return (0);
   }
+
+  // Print args
+  if (input->verbose) {
+    printf("Source IP = %d.%d.%d.%d\n", input->in_sip[0], input->in_sip[1],
+           input->in_sip[2], input->in_sip[3]);
+    printf("Source MAC address = %02x:%02x:%02x:%02x:%02x:%02x\n",
+           input->in_sha[0], input->in_sha[1], input->in_sha[2],
+           input->in_sha[3], input->in_sha[4], input->in_sha[5]);
+    printf("Target IP = %d.%d.%d.%d\n", input->in_tip[0], input->in_tip[1],
+           input->in_tip[2], input->in_tip[3]);
+    printf("Target MAC address = %02x:%02x:%02x:%02x:%02x:%02x\n",
+           input->in_tha[0], input->in_tha[1], input->in_tha[2],
+           input->in_tha[3], input->in_tha[4], input->in_tha[5]);
+  }
+
   return (1);
 }

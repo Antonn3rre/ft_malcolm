@@ -18,6 +18,7 @@ struct s_input {
   unsigned char in_tha[6];
   unsigned char in_tip[4];
   int interIndex;
+  int verbose;
 };
 
 struct arp_eth_ipv4 {
@@ -39,7 +40,7 @@ struct arp_eth_ipv4 {
 // checkInput.c
 int check_mac(char *str, unsigned char tab[6]);
 int check_ip(char *str, unsigned char tab[4]);
-int check_args(char **argv, struct s_input *input);
+int check_args(char **argv, struct s_input *input, int option);
 
 // checkInterface.c
 int checkInterface(struct s_input *input);
@@ -50,6 +51,7 @@ int ft_isalnum(int c);
 int strict_atoi(const char *nptr, int *i);
 void *ft_memcpy(void *dest, const void *src, size_t n);
 int ft_memcmp(const void *s1, const void *s2, size_t n);
+int ft_strncmp(const char *s1, const char *s2, size_t n);
 
 // parsePacket
 int parse_packet(char *buffer, struct s_input input);

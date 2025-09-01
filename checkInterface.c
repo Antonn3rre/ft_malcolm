@@ -3,7 +3,8 @@
 
 int checkInterface(struct s_input *input) {
 
-  (void)input;
+  if (input->verbose)
+    printf("\e[34m[ Searching for an interface ]\n\e[0m");
   struct ifaddrs *ifap;
 
   // Get interfaces list
@@ -42,10 +43,10 @@ int checkInterface(struct s_input *input) {
         (inp_sip & mask) == (ip_iface & mask)) {
 
       input->interIndex = if_nametoindex(ifap->ifa_name);
-      printf("Found interface: %s\n", ifap->ifa_name);
+      printf("\e[32mFound interface: %s\n\e[0m", ifap->ifa_name);
       return (1);
     }
-    printf("Not good: %s\n", ifap->ifa_name);
+    printf("\e[33mNot on the same network: %s\e[0m\n", ifap->ifa_name);
     ifap = ifap->ifa_next;
   }
   return (0);

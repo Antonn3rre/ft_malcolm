@@ -11,29 +11,19 @@ void ctrlC(int signum) {
 
 int main(int argc, char **argv) {
 
-  if (argc != 5) {
+  if (argc < 5 || argc > 6) {
     printf("Wrong number of arguments\n");
     return (0);
   }
 
   struct s_input input;
-  if (!check_args(argv, &input) || !checkInterface(&input))
+  if (!check_args(argv, &input, argc - 5) || !checkInterface(&input))
     return (0);
-  /*
-  // Print args
-    printf("arp sender ip address = %d.%d.%d.%d\n", input.in_sip[0],
-           input.in_sip[1], input.in_sip[2], input.in_sip[3]);
-    printf("arp target ip address = %d.%d.%d.%d\n", input.in_tip[0],
-           input.in_tip[1], input.in_tip[2], input.in_tip[3]);
-    printf("arp sender mac = %02x.%02x.%02x.%02x.%02x.%02x\n", input.in_sha[0],
-           input.in_sha[1], input.in_sha[2], input.in_sha[3], input.in_sha[4],
-           input.in_sha[5]);
-    printf("arp target mac = %02x.%02x.%02x.%02x.%02x.%02x\n", input.in_tha[0],
-           input.in_tha[1], input.in_tha[2], input.in_tha[3], input.in_tha[4],
-           input.in_tha[5]);
-  */
+
   signal(SIGINT, ctrlC);
 
+  if (input.verbose)
+    printf("\e[34m[ Opening socket ]\n\e[0m");
   int sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ARP));
   if (sockfd == -1) {
     printf("Error opening socket\n");
@@ -48,7 +38,7 @@ int main(int argc, char **argv) {
       perror("recvfrom");
       break;
     }
-    printf("Reçu un paquet ARP de %d octets\n", numbytes);
+    printf("AN ARP request has been broadcast\n");
     if (parse_packet(buffer, input))
       // Break if the request come from the rigth sender
       break;
@@ -57,9 +47,13 @@ int main(int argc, char **argv) {
   }
 
   // Create ARP response
+  if (input.verbose)
+    printf("\e[34m[ Creating ARP reply ]\n\e[0m");
   unsigned char responseBuf[42];
   createResponse(input, responseBuf);
 
+  printf("Now sending an ARP reply to the target address with spoofed source, "
+         "please wait...\n");
   // Send ARP response
   struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
   addr.sll_family = AF_PACKET;
@@ -74,6 +68,8 @@ int main(int argc, char **argv) {
              (struct sockaddr *)&addr, sizeof(struct sockaddr_ll)) == -1)
     perror("sendto");
   close(sockfd);
+  printf("Sent an ARP reply packet, you may now check the arp table on the "
+         "target.\nExiting program..");
 
   return (0);
 }
