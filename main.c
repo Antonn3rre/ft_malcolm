@@ -30,6 +30,8 @@ int main(int argc, char **argv) {
     return (0);
   }
 
+  if (input.verbose)
+    printf("\e[34m[ Waiting for an ARP request ]\n\e[0m");
   int numbytes = 0;
   char buffer[1000];
   while (1) {
@@ -69,7 +71,7 @@ int main(int argc, char **argv) {
     perror("sendto");
   close(sockfd);
   printf("Sent an ARP reply packet, you may now check the arp table on the "
-         "target.\nExiting program..");
+         "target.\nExiting program..\n");
 
   return (0);
 }
