@@ -41,6 +41,7 @@ int checkInterface(struct s_input *input) {
     if ((inp_tip & mask) == (ip_iface & mask) &&
         (inp_sip & mask) == (ip_iface & mask)) {
 
+      input->interIndex = if_nametoindex(ifap->ifa_name);
       printf("Found interface: %s\n", ifap->ifa_name);
       return (1);
     }

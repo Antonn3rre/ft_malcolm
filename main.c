@@ -64,7 +64,8 @@ int main(int argc, char **argv) {
   struct sockaddr_ll addr; // Structure attendue au niveau trames Ethernet
   addr.sll_family = AF_PACKET;
   addr.sll_protocol = htons(ETH_P_ARP);
-  addr.sll_ifindex = if_nametoindex("enp0s3");
+  // Precise de l'envoyer sur l'interface qui correpond au bon reseau
+  addr.sll_ifindex = input.interIndex;
   addr.sll_halen = 6;
   ft_memcpy(addr.sll_addr, input.in_tha, 6);
 
