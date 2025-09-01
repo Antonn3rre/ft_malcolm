@@ -15,7 +15,6 @@ int checkInterface(struct s_input *input) {
   ft_memcpy(&inp_tip, input->in_tip, 4);
   ft_memcpy(&inp_sip, input->in_sip, 4);
 
-  struct ifaddrs *tmp = ifap;
   while (ifap) {
 
     // If not an IPV4 address, skip
@@ -42,25 +41,8 @@ int checkInterface(struct s_input *input) {
     if ((inp_tip & mask) == (ip_iface & mask) &&
         (inp_sip & mask) == (ip_iface & mask)) {
 
-      struct ifaddrs *tmp2 = tmp;
-      // Re-check ifap to find the interface but with the AF_PACKET format
-      // Obj: get its MAC address
-      while (tmp2) {
-        if (tmp2->ifa_addr &&
-            !ft_memcmp(tmp2->ifa_name, ifap->ifa_name,
-                       ft_strlen(ifap->ifa_name) &&
-                           tmp->ifa_addr->sa_family == AF_PACKET)) {
-
-          // Store IP and MAC addresses then quit
-          printf("Found interface: %s\n", ifap->ifa_name);
-          ft_memcpy(input->interface_ip,
-                    &((struct sockaddr_in *)ifap->ifa_addr)->sin_addr, 4);
-          ft_memcpy(input->interface_mac,
-                    ((struct sockaddr_ll *)(tmp2->ifa_addr))->sll_addr, 6);
-          return (1);
-        }
-        tmp2 = tmp2->ifa_next;
-      }
+      printf("Found interface: %s\n", ifap->ifa_name);
+      return (1);
     }
     printf("Not good: %s\n", ifap->ifa_name);
     ifap = ifap->ifa_next;

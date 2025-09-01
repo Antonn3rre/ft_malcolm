@@ -17,8 +17,6 @@ struct s_input {
   unsigned char in_sip[4];
   unsigned char in_tha[6];
   unsigned char in_tip[4];
-  unsigned char interface_ip[4];
-  unsigned char interface_mac[6];
 };
 
 struct arp_eth_ipv4 {
