@@ -4,12 +4,12 @@
 
 int checkHostname(char *str, unsigned char tab[4]) {
 
-	struct addrinfo hints, *res;
+	struct addrinfo hints, *res = NULL;
 	ft_memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 
 	if (getaddrinfo(str, NULL, &hints, &res) != 0)
-		return (0);  // If fail
+		return (0);  // If hostname does not exists
 	struct sockaddr_in *addr = (struct sockaddr_in *)res->ai_addr;
 	ft_memcpy(tab, &addr->sin_addr, 4);
 	freeaddrinfo(res);
@@ -92,7 +92,7 @@ int check_args(char **argv, struct s_input *input, int option) {
     }
   }
   if (input->verbose)
-    printf("\e[34m[ Checking input ]\n\e[0m");
+    printf("\e[34m[ Checking input ]\e[0m\n");
 
   // IP that (should) receive the request
   if (!check_ip(argv[i], input->in_sip)) {
